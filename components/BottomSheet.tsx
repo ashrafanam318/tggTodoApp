@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet, Modal, Platform } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  Platform,
+  KeyboardAvoidingView,
+} from "react-native";
 import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -23,7 +30,10 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
       visible={visible}
       onRequestClose={onClose}
     >
-      <View style={styles.modalContainer}>
+      <KeyboardAvoidingView
+        behavior={Platform.select({ ios: "padding" })}
+        style={styles.modalContainer}
+      >
         <View style={styles.modalContent}>
           <View style={styles.modalTitleContainer}>
             <Text
@@ -43,57 +53,12 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 
           <View style={styles.childrenContainer}>{children}</View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: Colors.background,
-  },
-  newTodoInput: {
-    backgroundColor: Colors.inputBackground,
-    color: Colors.tint,
-    padding: 8,
-    borderRadius: 8,
-    flex: 1,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    width: "100%",
-    alignItems: "center",
-    gap: 12,
-  },
-  addNewButton: {
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 8,
-    borderColor: Colors.border,
-  },
-  addNewTitle: {
-    fontSize: 13,
-    color: Colors.tint,
-  },
-  todoText: {
-    flex: 1,
-    fontSize: 14,
-    color: Colors.tint,
-    marginRight: 24,
-  },
-  todoContainer: {
-    padding: 10,
-    flexDirection: "row",
-    color: Colors.text,
-    borderColor: Colors.border,
-  },
-  itemSeparator: {
-    backgroundColor: Colors.border,
-    width: "100%",
-    height: StyleSheet.hairlineWidth,
-  },
   modalContainer: {
     flex: 1,
     alignItems: Platform.select({ web: "center" }),
@@ -136,10 +101,4 @@ const styles = StyleSheet.create({
     height: 180,
     padding: 20,
   },
-  actionItem: {
-    flexDirection: "row",
-    paddingVertical: 12,
-    width: "100%",
-  },
-  actionItemText: { fontSize: 18, color: Colors.text, flex: 1 },
 });

@@ -11,7 +11,9 @@ export const useAuthToken = () => {
       try {
         const storedToken = await AsyncStorage.getItem(TOKEN_KEY);
         setToken(storedToken);
-      } catch (error) {}
+      } catch (error) {
+        console.error(error);
+      }
     };
 
     loadToken();

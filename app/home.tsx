@@ -10,14 +10,12 @@ import {
   ListRenderItem,
   Keyboard,
 } from "react-native";
-import { useRouter } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { Todo } from "@/shared/types";
 import { TodoActionSheet } from "@/components/TodoActionSheet";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function HomeScreen() {
-  const router = useRouter();
   const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState("");
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);

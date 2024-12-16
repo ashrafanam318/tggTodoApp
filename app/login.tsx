@@ -6,17 +6,16 @@ import {
   StyleSheet,
   Alert,
   ScrollView,
-  Keyboard,
   Pressable,
   Platform,
   ActivityIndicator,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { AxiosError } from "axios";
-import { Colors } from "@/constants/Colors";
+import { Colors } from "../constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
-import { useAuth } from "@/hooks/useAuth";
-import { useAuthToken } from "@/hooks/useAuthToken";
+import { useAuth } from "../hooks/useAuth";
+import { useAuthToken } from "../hooks/useAuthToken";
 
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
@@ -25,18 +24,20 @@ export default function LoginScreen() {
   const router = useRouter();
 
   const showAuthErrorAlert = (message?: string) => {
-    Platform.OS === "web"
-      ? alert(
-          ` ${
-            message ??
-            "Something went wrong! Please try again later or with a different account."
-          }`
-        )
-      : Alert.alert(
-          "Error!",
+    if (Platform.OS === "web") {
+      alert(
+        ` ${
           message ??
-            "Something went wrong! Please try again later or with a different account."
-        );
+          "Something went wrong! Please try again later or with a different account."
+        }`
+      );
+    } else {
+      Alert.alert(
+        "Error!",
+        message ??
+          "Something went wrong! Please try again later or with a different account."
+      );
+    }
   };
 
   const { saveToken } = useAuthToken();

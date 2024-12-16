@@ -1,11 +1,10 @@
 import React from "react";
-import { View, StyleSheet, Text, SafeAreaView } from "react-native";
+import { View, StyleSheet, SafeAreaView, Platform } from "react-native";
 import { Stack } from "expo-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StatusBar } from "expo-status-bar";
 import { Colors } from "@/constants/Colors";
 
-// Initialize the React Query Client
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
@@ -25,6 +24,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.background,
+    ...Platform.select({ web: { alignItems: "center" } }),
   },
-  contentContainer: { flex: 1, maxWidth: 600 },
+  contentContainer: {
+    flex: 1,
+    ...Platform.select({ web: { width: "100%", maxWidth: 480 } }),
+  },
 });

@@ -1,13 +1,13 @@
-import { AuthCredentials, AuthResponse } from "@/shared/types";
+import CONSTANTS from "expo-constants";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
+import { AuthCredentials, AuthResponse } from "../shared/types";
+
+const API_URL = CONSTANTS.expoConfig?.extra?.apiUrl + "/api/auth";
 
 const register = async (credentials: AuthCredentials) => {
   try {
-    const response = await axios.post(
-      "http://localhost:5000/api/auth/register",
-      credentials
-    );
+    const response = await axios.post(API_URL + "/register", credentials);
     return response.data;
   } catch (error) {
     throw error;
@@ -16,10 +16,7 @@ const register = async (credentials: AuthCredentials) => {
 
 const login = async (credentials: AuthCredentials) => {
   try {
-    const response = await axios.post(
-      "http://localhost:5000/api/auth/login",
-      credentials
-    );
+    const response = await axios.post(API_URL + "/login", credentials);
     return response.data;
   } catch (err) {
     const error = err as AxiosError<{ message: string }>;

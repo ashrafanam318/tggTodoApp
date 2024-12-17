@@ -20,3 +20,6 @@ Assuming that the backend is running, please run the following commands after cl
     npx expo start
    ```
 3. Recommended for testing -> Download the [Expo Go](https://expo.dev/go) App and scan the general QR code from the terminal to view the application on your phone
+
+## Demo
+https://www.loom.com/share/ee7aca3309ce478f81bff0464ba07e90

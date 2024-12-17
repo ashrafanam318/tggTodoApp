@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     ...Platform.select({
       web: {
-        minWidth: 360,
+        width: 420,
         borderBottomLeftRadius: 20,
         borderBottomRightRadius: 20,
       },

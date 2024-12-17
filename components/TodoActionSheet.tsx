@@ -7,9 +7,9 @@ import {
   ActivityIndicator,
   TextInput,
 } from "react-native";
-import { Colors } from "@/constants/Colors";
+import { Colors } from "../constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
-import { BottomSheet, BottomSheetProps } from "@/components/BottomSheet";
+import { BottomSheet, BottomSheetProps } from "../components/BottomSheet";
 
 interface TodoActionSheetProps extends BottomSheetProps {
   todoId?: string;
@@ -31,7 +31,7 @@ export const TodoActionSheet: React.FC<TodoActionSheetProps> = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [editedTodo, setEditedTodo] = useState(title);
+  const [editedTodo, setEditedTodo] = useState("");
 
   const clearAllAndClose = () => {
     setEditedTodo("");

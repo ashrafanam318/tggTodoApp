@@ -6,29 +6,22 @@ import {
   StyleSheet,
   TextInput,
   Pressable,
-  Alert,
   ListRenderItem,
+  ActivityIndicator,
+  Platform,
+  RefreshControl,
   Keyboard,
 } from "react-native";
-import { Colors } from "@/constants/Colors";
-import { Todo } from "@/shared/types";
-import { TodoActionSheet } from "@/components/TodoActionSheet";
 import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "../constants/Colors";
+import { Todo } from "../shared/types";
+import { TodoActionSheet } from "../components/TodoActionSheet";
+import { useTodos } from "../hooks/useTodos";
 
 export default function HomeScreen() {
-  const [todos, setTodos] = useState<Todo[]>([]);
   const [newTodo, setNewTodo] = useState("");
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
   const [actionsVisible, setActionsVisible] = useState(false);
-
-  const onAddNew = () => {
-    setTodos((prev) => [
-      ...prev,
-      { id: prev.length.toString(), title: newTodo },
-    ]);
-    setNewTodo("");
-    Keyboard.dismiss();
-  };
 
   const showActions = (item: Todo) => {
     setSelectedTodo(item);
@@ -38,6 +31,22 @@ export default function HomeScreen() {
   const hideActions = () => {
     setActionsVisible(false);
     setSelectedTodo(null);
+  };
+
+  const {
+    todos,
+    refetchTodos,
+    isLoading,
+    editTodo,
+    deleteTodo,
+    completeTodo,
+    createTodo,
+  } = useTodos();
+
+  const addNewTodo = () => {
+    createTodo(newTodo);
+    setNewTodo("");
+    Keyboard.dismiss();
   };
 
   const renderTodoItem: ListRenderItem<Todo> = ({ item }) => {
@@ -52,30 +61,43 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      <Pressable style={styles.logoutButton}>
+        <View style={styles.logoutTextContainer}>
+          <Ionicons name={"arrow-back"} color={Colors.tint} />
+          <Text style={styles.logoutText}>Logout</Text>
+        </View>
+      </Pressable>
+
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.newTodoInput}
           value={newTodo}
           onChangeText={setNewTodo}
-          onSubmitEditing={onAddNew}
+          onSubmitEditing={addNewTodo}
         />
-        <Pressable style={styles.addNewButton} onPress={onAddNew}>
+        <Pressable style={styles.addNewButton} onPress={addNewTodo}>
           <Text style={styles.addNewTitle}>Add New</Text>
         </Pressable>
       </View>
-      <Pressable style={styles.completedTasksButton}>
-        <View style={styles.completedTasksTextContainer}>
-          <Text style={styles.completedTasksText}>Completed Tasks</Text>
-          <Ionicons name={"arrow-forward"} color={Colors.success} />
-        </View>
-      </Pressable>
 
       <FlatList
+        refreshControl={
+          <RefreshControl onRefresh={refetchTodos} refreshing={isLoading} />
+        }
         data={todos}
         keyboardDismissMode={"on-drag"}
         contentContainerStyle={styles.todoListContainer}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item._id.toString()}
         renderItem={renderTodoItem}
+        ListHeaderComponent={
+          isLoading ? (
+            <ActivityIndicator
+              style={{ marginTop: 20 }}
+              size={"small"}
+              color={Colors.tint}
+            />
+          ) : null
+        }
         ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
       />
 
@@ -83,16 +105,10 @@ export default function HomeScreen() {
         visible={actionsVisible}
         onClose={hideActions}
         title={selectedTodo?.title}
-        todoId={selectedTodo?.id}
-        onComplete={(id) => {
-          Alert.alert("Complete", selectedTodo?.title + " " + id);
-        }}
-        onEdit={(id, title) => {
-          Alert.alert("Editing complete", title + " " + id);
-        }}
-        onDelete={(id) => {
-          Alert.alert("deleting complete", selectedTodo?.title + " " + id);
-        }}
+        todoId={selectedTodo?._id}
+        onComplete={(_id) => completeTodo(_id)}
+        onEdit={(_id, title) => editTodo({ _id, title })}
+        onDelete={(_id) => deleteTodo(_id)}
       />
     </View>
   );
@@ -116,7 +132,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
     paddingHorizontal: 20,
-    paddingTop: 20,
+    paddingTop: 16,
   },
   addNewButton: {
     borderWidth: 1,
@@ -128,18 +144,18 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: Colors.tint,
   },
-  completedTasksButton: {
-    paddingRight: 20,
-    paddingVertical: 16,
-    alignSelf: "flex-end",
+  logoutButton: {
+    paddingLeft: 20,
+    paddingTop: Platform.select({ default: 8, web: 20 }),
+    alignSelf: "flex-start",
   },
-  completedTasksText: {
+  logoutText: {
     fontSize: 13,
-    color: Colors.success,
-    textAlign: "right",
-    marginRight: 4
+    color: Colors.tint,
+    textAlign: "left",
+    marginLeft: 4,
   },
-  completedTasksTextContainer: {
+  logoutTextContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",

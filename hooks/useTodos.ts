@@ -1,9 +1,8 @@
-import CONSTANTS from "expo-constants";
 import axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Todo } from "../shared/types";
 
-const API_URL = CONSTANTS.expoConfig?.extra?.apiUrl + "/api/todos";
+const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/todos";
 
 const fetchTodos = async (): Promise<Todo[]> => {
   const response = await axios.get(API_URL);

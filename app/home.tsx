@@ -17,12 +17,14 @@ import { Colors } from "../constants/Colors";
 import { Todo } from "../shared/types";
 import { TodoActionSheet } from "../components/TodoActionSheet";
 import { useTodos } from "../hooks/useTodos";
+import { useAuthToken } from "../hooks/useAuthToken";
+import { router } from "expo-router";
 
 export default function HomeScreen() {
   const [newTodo, setNewTodo] = useState("");
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
   const [actionsVisible, setActionsVisible] = useState(false);
-
+  const { clearToken } = useAuthToken();
   const {
     todos: data = [],
     refetchTodos,
@@ -56,6 +58,10 @@ export default function HomeScreen() {
     Keyboard.dismiss();
   };
 
+  const logout = () => {
+    clearToken().then(() => router.push("/login"));
+  };
+
   const showActions = (item: Todo) => {
     setSelectedTodo(item);
     setActionsVisible(true);
@@ -84,7 +90,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Pressable style={styles.logoutButton}>
+      <Pressable style={styles.logoutButton} onPress={logout}>
         <View style={styles.logoutTextContainer}>
           <Ionicons name={"arrow-back"} color={Colors.tint} />
           <Text style={styles.logoutText}>Logout</Text>

@@ -1,9 +1,8 @@
-import CONSTANTS from "expo-constants";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { AuthCredentials, AuthResponse } from "../shared/types";
 
-const API_URL = CONSTANTS.expoConfig?.extra?.apiUrl + "/api/auth";
+const API_URL = process.env.EXPO_PUBLIC_API_URL + "/api/auth";
 
 const register = async (credentials: AuthCredentials) => {
   try {

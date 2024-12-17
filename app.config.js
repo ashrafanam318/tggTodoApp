@@ -38,9 +38,6 @@ export default {
     ],
     experiments: {
       typedRoutes: true,
-    },
-    extra: {
-      apiUrl: process.env.EXPO_PUBLIC_API_URL,
-    },
+    }
   },
 };

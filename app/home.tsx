@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   View,
   Text,
-  FlatList,
   StyleSheet,
   TextInput,
   Pressable,
@@ -11,6 +10,7 @@ import {
   Platform,
   RefreshControl,
   Keyboard,
+  SectionList,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "../constants/Colors";
@@ -23,6 +23,39 @@ export default function HomeScreen() {
   const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
   const [actionsVisible, setActionsVisible] = useState(false);
 
+  const {
+    todos: data = [],
+    refetchTodos,
+    isLoading,
+    editTodo,
+    deleteTodo,
+    completeTodo,
+    createTodo,
+  } = useTodos();
+
+  const sections = useMemo(
+    () =>
+      data.length === 0
+        ? []
+        : [
+            {
+              title: "To-Dos",
+              data: data?.filter((todo) => !todo.completed),
+            },
+            {
+              title: "Completed",
+              data: data?.filter((todo) => todo.completed),
+            },
+          ],
+    [data]
+  );
+
+  const addNewTodo = () => {
+    createTodo(newTodo);
+    setNewTodo("");
+    Keyboard.dismiss();
+  };
+
   const showActions = (item: Todo) => {
     setSelectedTodo(item);
     setActionsVisible(true);
@@ -33,26 +66,16 @@ export default function HomeScreen() {
     setSelectedTodo(null);
   };
 
-  const {
-    todos,
-    refetchTodos,
-    isLoading,
-    editTodo,
-    deleteTodo,
-    completeTodo,
-    createTodo,
-  } = useTodos();
-
-  const addNewTodo = () => {
-    createTodo(newTodo);
-    setNewTodo("");
-    Keyboard.dismiss();
-  };
-
   const renderTodoItem: ListRenderItem<Todo> = ({ item }) => {
     return (
       <Pressable onPress={() => showActions(item)}>
         <View style={styles.todoContainer}>
+          <Ionicons
+            name={item.completed ? "checkbox-outline" : "square-outline"}
+            size={20}
+            color={Colors[item.completed ? "success" : "tint"]}
+            style={{ marginRight: 20 }}
+          />
           <Text style={styles.todoText}>{item.title}</Text>
         </View>
       </Pressable>
@@ -80,24 +103,26 @@ export default function HomeScreen() {
         </Pressable>
       </View>
 
-      <FlatList
+      <SectionList
+        sections={sections}
+        keyExtractor={(item) => item._id.toString()}
+        renderItem={renderTodoItem}
+        renderSectionHeader={({ section }) => (
+          <Text style={styles.sectionHeader}>{section.title}</Text>
+        )}
         refreshControl={
           <RefreshControl onRefresh={refetchTodos} refreshing={isLoading} />
         }
-        data={todos}
-        keyboardDismissMode={"on-drag"}
-        contentContainerStyle={styles.todoListContainer}
-        keyExtractor={(item) => item._id.toString()}
-        renderItem={renderTodoItem}
         ListHeaderComponent={
           isLoading ? (
             <ActivityIndicator
               style={{ marginTop: 20 }}
-              size={"small"}
+              size="small"
               color={Colors.tint}
             />
           ) : null
         }
+        contentContainerStyle={styles.todoListContainer}
         ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
       />
 
@@ -105,7 +130,7 @@ export default function HomeScreen() {
         visible={actionsVisible}
         onClose={hideActions}
         title={selectedTodo?.title}
-        todoId={selectedTodo?._id}
+        todo={selectedTodo}
         onComplete={(_id) => completeTodo(_id)}
         onEdit={(_id, title) => editTodo({ _id, title })}
         onDelete={(_id) => deleteTodo(_id)}
@@ -159,6 +184,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     alignItems: "center",
+  },
+  sectionHeader: {
+    fontSize: 13,
+    fontWeight: "bold",
+    color: Colors.tint,
+    marginTop: 10,
+    marginBottom: 5,
+    backgroundColor: Colors.background,
   },
   todoListContainer: { paddingHorizontal: 20, paddingBottom: 20 },
   todoText: {

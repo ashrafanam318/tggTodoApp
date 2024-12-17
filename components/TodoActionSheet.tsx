@@ -10,9 +10,10 @@ import {
 import { Colors } from "../constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { BottomSheet, BottomSheetProps } from "../components/BottomSheet";
+import { Todo } from "../shared/types";
 
 interface TodoActionSheetProps extends BottomSheetProps {
-  todoId?: string;
+  todo: Todo | null;
   isLoading?: boolean;
   onComplete: (id: string) => void;
   onEdit: (id: string, title: string) => void;
@@ -23,7 +24,7 @@ export const TodoActionSheet: React.FC<TodoActionSheetProps> = ({
   onComplete,
   onEdit,
   onDelete,
-  todoId,
+  todo,
   isLoading,
   title,
   onClose,
@@ -32,6 +33,7 @@ export const TodoActionSheet: React.FC<TodoActionSheetProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [editedTodo, setEditedTodo] = useState("");
+  const { _id: todoId, completed } = todo || {};
 
   const clearAllAndClose = () => {
     setEditedTodo("");
@@ -43,6 +45,7 @@ export const TodoActionSheet: React.FC<TodoActionSheetProps> = ({
   const completeTodo = () => {
     if (todoId) {
       onComplete(todoId);
+      clearAllAndClose();
     }
   };
 
@@ -106,17 +109,21 @@ export const TodoActionSheet: React.FC<TodoActionSheetProps> = ({
           renderDeleteView()
         ) : (
           <>
-            <Pressable onPress={completeTodo}>
-              <View style={styles.actionItem}>
-                <Text style={styles.actionItemText}>Complete</Text>
-                <Ionicons
-                  name="checkbox-outline"
-                  size={20}
-                  color={Colors.success}
-                />
-              </View>
-            </Pressable>
-            <View style={styles.itemSeparator} />
+            {!completed && (
+              <>
+                <Pressable onPress={completeTodo}>
+                  <View style={styles.actionItem}>
+                    <Text style={styles.actionItemText}>Mark as Complete</Text>
+                    <Ionicons
+                      name="checkbox-outline"
+                      size={20}
+                      color={Colors.success}
+                    />
+                  </View>
+                </Pressable>
+                <View style={styles.itemSeparator} />
+              </>
+            )}
 
             <Pressable onPress={() => setIsEditing(true)}>
               <View style={styles.actionItem}>

@@ -8,6 +8,7 @@ export type AuthResponse = {
 };
 
 export type Todo = {
-  id: string;
+  _id: string;
   title: string;
+  completed?: boolean;
 };

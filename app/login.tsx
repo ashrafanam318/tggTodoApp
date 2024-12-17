@@ -24,6 +24,7 @@ export default function LoginScreen() {
   const router = useRouter();
 
   const showAuthErrorAlert = (message?: string) => {
+    console.log(message);
     if (Platform.OS === "web") {
       alert(
         ` ${
@@ -62,6 +63,7 @@ export default function LoginScreen() {
         value={username}
         onChangeText={setUsername}
         style={styles.input}
+        autoCapitalize={"none"}
       />
       <TextInput
         placeholder="Password"

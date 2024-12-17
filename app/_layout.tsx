@@ -3,7 +3,7 @@ import { View, StyleSheet, SafeAreaView, Platform } from "react-native";
 import { Stack } from "expo-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StatusBar } from "expo-status-bar";
-import { Colors } from "@/constants/Colors";
+import { Colors } from "../constants/Colors";
 
 const queryClient = new QueryClient();
 
